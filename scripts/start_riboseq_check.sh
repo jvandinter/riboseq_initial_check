@@ -59,7 +59,7 @@ printf "%s\n" "${r1_files[@]}" > ${project_folder}/documentation/r1_files.txt
 printf "%s\n" "${sample_ids[@]}" > ${project_folder}/documentation/sample_ids.txt
 
 # Create output directories
-mkdir -p ${project_folder}/log/${run_id}/{trimgalore,star_align,bowtie2,riboseqc} 
+mkdir -p ${project_folder}/log/${run_id}/{trim,star_align,bowtie2,riboseqc} 
 echo "`date` using run ID: ${run_id}"
 mkdir -p ${outdir}
 
@@ -124,7 +124,7 @@ contaminant_jobid+=($(sbatch --parsable \
   --output=${project_folder}/log/${run_id}/bowtie2/%A_%a.out \
   --dependency=aftercorr:${trim_jobid} \
   --export=ALL \
-  ${scriptdir}/select_rpf.sh
+  ${scriptdir}/remove_contaminants.sh
   
 ))
 
@@ -149,7 +149,7 @@ star_jobid+=($(sbatch --parsable \
   --output=${project_folder}/log/${run_id}/star_align/%A_%a.out \
   --dependency=aftercorr:${contaminant_jobid} \
   --export=ALL \
-  ${scriptdir}/align_reads.sh
+  ${scriptdir}/star_align.sh
 ))
 
 info "alignment jobid: ${star_jobid}"
@@ -190,7 +190,7 @@ riboreport_jobid+=($(sbatch --parsable \
   --output=${project_folder}/log/${run_id}/riboreport.out \
   --dependency=afterok:${riboseqc_jobid} \
   --export=ALL \
-  ${scriptdir}/mrp_riboseqc_report.sh
+  ${scriptdir}/riboseqc_report.sh
 ))
 
 info "RiboseQC report jobid: ${riboreport_jobid}"
@@ -210,7 +210,7 @@ multiqc_jobid+=($(sbatch --parsable \
   --output=${project_folder}/log/${run_id}/%A_multiqc.out \
   --dependency=afterok:${star_jobid} \
   --export=ALL \
-  ${scriptdir}/mrp_multiqc.sh
+  ${scriptdir}/multiqc.sh
 ))
 
 info "MultiQC jobid: ${multiqc_jobid[@]}"
