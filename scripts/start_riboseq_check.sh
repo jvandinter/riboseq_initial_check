@@ -208,7 +208,7 @@ multiqc_jobid+=($(sbatch --parsable \
   --time=24:00:00 \
   --job-name=${run_id}.multiqc \
   --output=${project_folder}/log/${run_id}/%A_multiqc.out \
-  --dependency=afterok:${star_jobid} \
+  --dependency=afterok:${riboseqc_jobid} \
   --export=ALL \
   ${scriptdir}/multiqc.sh
 ))
@@ -231,6 +231,6 @@ figure_jobid+=($(sbatch --parsable \
   ${scriptdir}/create_QC_report.sh
 ))
 
-info "MultiQC jobid: ${figure_jobid[@]}"
+info "Final report jobid: ${figure_jobid[@]}"
 
 echo -e "\n ====== `date` Started all jobs! ====== \n"

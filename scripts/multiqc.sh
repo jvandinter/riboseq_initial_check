@@ -8,23 +8,18 @@
 #
 ######################################################################
 
-set -uo pipefail
-
 # Load parameters from main script
-source $1
-name=$2
-
-# Load correct modules
-module load multiqc/${multiqc_version}
+threads=$((SLURM_CPUS_PER_TASK * 2))
 
 echo "`date` running MultiQC for all samples"
 
-cd ${wd}
+mkdir -p "${outdir}/multiqc"
 
 # Run MultiQC
-multiqc \
-  "${wd}/data/processed/" \
-  --outdir "${wd}/data/processed/" \
-  --filename "${pool_id}_multiqc.html"
+apptainer exec -B "/hpc:/hpc" --env "LC_ALL=C.UTF-8" \
+ ${container_dir}/multiqc-1.11.sif multiqc \
+ "${outdir}" \
+ --outdir "${outdir}/multiqc" \
+ --filename "${run_name}_multiqc.html"
 
-  echo "`date` finished MultiQC"
+echo "`date` finished MultiQC"

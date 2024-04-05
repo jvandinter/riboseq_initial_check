@@ -36,7 +36,7 @@ input_sample_names = gsub("_.*","",basename(input_files))
     output_file <- paste(normalizePath(dirname(output_file)),basename(output_file),sep="/")
 
     # get path to RMarkdown file (to be rendered)
-    rmd_path <- paste(scriptdir,"heesch_riboseqc_report.Rmd", sep = "/")
+    rmd_path <- paste(scriptdir,"rmd","riboseqc_template.Rmd", sep = "/")
 
     # set tmp folder outside Rpackage
     tmp_dir = dirname(output_file)
